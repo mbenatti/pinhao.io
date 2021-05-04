@@ -5,11 +5,15 @@ const app = express()
 
 // Require API routes
 const users = require('./routes/users')
+const wallets = require('./routes/wallets')
+const farms = require('./routes/farms')
 const test = require('./routes/test')
 
 // Import API Routes
 app.use(users)
+app.use(wallets)
 app.use(test)
+app.use(farms)
 
 // Export express app
 module.exports = app

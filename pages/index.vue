@@ -14,8 +14,15 @@
           >
             Users List
           </a>
+          <a
+            href="/wallets"
+            class="button--green"
+          >
+            Wallets
+          </a>
         </div>
       </div>
+
       <div class="links">
         <a
           href="https://nuxtjs.org/"
