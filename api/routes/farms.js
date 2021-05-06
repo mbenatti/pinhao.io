@@ -5,7 +5,7 @@ const router = Router()
 
 // Test route
 router.use('/farms', (req, res) => {
-  console.log(farms)
+//  console.log(farms)
 
   res.json(farms)
 })
