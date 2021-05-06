@@ -56,7 +56,10 @@ export default {
     // Doc: https://http.nuxtjs.org
     '@nuxt/http'
   ],
-
+  http: {
+    // HTTP options here
+    baseURL: process.env.BASE_URL || 'http://localhost:3000'
+  },
   /*
   ** Server Middleware
   */
