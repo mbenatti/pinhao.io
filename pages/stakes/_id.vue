@@ -3,13 +3,19 @@
     <div>
       <Logo />
       <h1 class="title">
-        User
+        Stake Balance
       </h1>
       <h2 class="info">
-        {{ user.name }}
+        Farm: {{ farm }}
       </h2>
-      <nuxt-link class="button" to="/users">
-        Users
+      <h2 class="info">
+        Wallet: {{ wallet }}
+      </h2>
+      <h2 class="title">
+        Your balance: {{ data.balance }}
+      </h2>
+      <nuxt-link class="button" to="/">
+        Back
       </nuxt-link>
     </div>
   </section>
@@ -17,18 +23,17 @@
 
 <script>
 export default {
-  asyncData ({ params, error, $http }) {
-    return $http.$get('/api/users/' + params.id)
-      .then((res) => {
-        return { user: res }
-      })
+  async asyncData ({ params, error, $http }) {
+    return await $http.$get('/api/stakes/' + params.pid + '/' + params.wallet).then((res) => {
+      return { data: res, wallet: params.wallet, farm: params.farm }
+    })
       .catch((e) => {
-        error({ statusCode: 404, message: 'User not found' })
+        error({ statusCode: 404, message: 'Error fetching data, verify your wallet' })
       })
   },
   head () {
     return {
-      title: `User: ${this.user.name}`
+      title: `Stake: ${this.farm}`
     }
   }
 }
