@@ -1,23 +1,31 @@
 const { Router } = require('express')
 const Web3 = require('web3');
 const util = require('util');
+import farms from '../common/farms'
 
 // mainnet
 const Provider = Web3.providers.HttpProvider;
-const web3 = new Web3(new Provider('https://bsc-dataseed1.binance.org/'));
+const web3 = new Web3(new Provider('https://bsc-dataseed1.binance.org/',
+  {
+    keepAlive: true,
+    withCredentials: false,
+    timeout: 10000
+  }));
 
 const router = Router()
 
 /* GET stake balance by ID. */
-router.get('/stakes/:id/:wallet', function (req, res) {
+router.get('/stakes/:wallet', function (req, res) {
 
   (async ()=> {
 
     try {
-      const stakePid = parseInt(req.params.id)
       const wallet = req.params.wallet
+      var balance;
 
-      balance = await pancakeSyrupBalance(stakePid, wallet)
+      balance = await pancakeSyrupBalance(wallet)
+//      console.log('balance:');
+//      console.log(balance);
       res.json({balance: balance, wallet: wallet})
     } catch(e) {
       console.log(e);
@@ -32,16 +40,29 @@ const MasterChefPancakeABI = [{"inputs":[{"internalType":"contract CakeToken","n
 const PancakeSyrupAddress = '0x73feaa1eE314F8c655E354234017bE2193C9E24E'
 
 const pancake = new web3.eth.Contract(MasterChefPancakeABI, PancakeSyrupAddress);
+const batch = new web3.BatchRequest();
 
-async function pancakeSyrupBalance(farmId, address) {
-    // Aqui usa-se a função userInfo, que retorna a quantidade em stake e o debito de recompensa da pool
-    balance = await pancake.methods.userInfo(farmId, address).call();
-    console.log('Pancake:' + JSON.stringify(balance));
-    // Aqui tem a função pendingReward pra ver as recompensas pendentes
-    console.log(`Pancake Swap pool balance: ${web3.utils.fromWei(balance.amount, 'ether')} CAKE`);
-    console.log(`Pancake Swap reward debt: ${web3.utils.fromWei(balance.rewardDebt, 'ether')} DFD`);
+async function pancakeSyrupBalance(address) {
 
-    return web3.utils.fromWei(balance.amount, 'ether')
+  var promises = [];
+
+  farms.forEach(farm => {
+
+    promises.push(
+      new Promise((res, rej) => {
+        batch.add(pancake.methods.userInfo(farm.pid, address).call.request(
+          {},
+          (err, data) => err ? res({farmName: farm.lpSymbol + ' Error Fetch', farmBalance: 0}) : res({farmName: farm.lpSymbol, farmBalance: web3.utils.fromWei(data.amount, 'ether')})
+        ));
+      })
+    );
+  });
+
+  await batch.execute();
+
+  console.log('promises:')
+  console.log(promises)
+  return Promise.all(promises)
 }
 
 module.exports = router
