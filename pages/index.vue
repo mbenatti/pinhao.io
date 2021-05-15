@@ -9,12 +9,10 @@
       <br><h3>Place your wallet address here:</h3><br>
       <input v-model="wallet" placeholder="wallet address">
       <p>Wallet is: {{ wallet }}</p>
-        <br><h3>and select the farm...</h3><br>
-        <li v-for="(farm, index) in farms" :key="index" class="stake">
-          <nuxt-link :to="{ name: 'stakes-id', params: { id: farm.pid, wallet: wallet, pid: farm.pid, farm: farm.lpSymbol}}">
-            {{ farm.lpSymbol }}
+        <br><h3>and...</h3><br>
+          <nuxt-link :to="{ name: 'stakes-id', params: { id: 0, wallet: wallet}}">
+            Show the balances!
           </nuxt-link>
-        </li>
       </ul>
       <nuxt-link class="button" to="/">
         Homepage
