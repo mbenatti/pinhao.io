@@ -47,3 +47,11 @@ yarn install # or npm install
 - [VueJS license](https://github.com/vuejs/vue/blob/master/LICENSE)
 
 
+## Heroku Deploy
+
+- heroku apps:create "your-app"
+- heroku config:set NODE_ENV=production                                                                                                                              
+- heroku config:set HOST=0.0.0.0                                                                                                                                      
+- heroku config:set NPM_CONFIG_PRODUCTION=false                                                                                                                          
+- heroku config:set BASE_URL=https://your-app.herokuapp.com/                                                                                                        
+
