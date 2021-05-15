@@ -3,17 +3,28 @@
     <div>
       <Logo />
       <h1 class="title">
-        Stake Balance
+        Stake(s) Balance
       </h1>
-      <h2 class="info">
-        Farm: {{ farm }}
-      </h2>
+
       <h2 class="info">
         Wallet: {{ wallet }}
       </h2>
-      <h2 class="title">
-        Your balance: {{ data.balance }}
-      </h2>
+      <div class="data">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                  <th>Farm LP</th>
+                  <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="farm in data.balance">
+                  <td>{{ farm["farmName"] }}</td>
+                  <td>{{ farm["farmBalance"] }}</td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
       <nuxt-link class="button" to="/">
         Back
       </nuxt-link>
@@ -24,7 +35,7 @@
 <script>
 export default {
   async asyncData ({ params, error, $http }) {
-    return await $http.$get('/api/stakes/' + params.pid + '/' + params.wallet).then((res) => {
+    return await $http.$get('/api/stakes/' + params.wallet).then((res) => {
       return { data: res, wallet: params.wallet, farm: params.farm }
     })
       .catch((e) => {
@@ -62,5 +73,13 @@ export default {
 .button
 {
   margin-top: 30px;
+}
+.data
+{
+padding-top: 20px;
+text-align: -webkit-center;
+}
+table, th, td {
+  border: 1px solid black;
 }
 </style>
